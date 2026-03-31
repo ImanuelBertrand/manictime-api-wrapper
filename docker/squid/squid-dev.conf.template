@@ -1,6 +1,5 @@
-# Allowlisted destinations
-# Add your ManicTime server hostname here:
-# acl allowed_domains dstdomain your-manictime-server.example.com
+# Allowlisted destinations — set via ENV MT_HOSTNAME
+acl allowed_domains dstdomain ${MT_HOSTNAME}
 
 # Dev extras: allow package registries and Claude Code
 acl allowed_domains dstdomain .anthropic.com

@@ -49,7 +49,7 @@ The production Squid config is generated from `docker/squid/squid-prod.conf.temp
 - **Build time**: pass `--build-arg MT_HOSTNAME=<hostname>` — bakes the hostname into the image. The CI pipeline does not set this, so published images default to `example.invalid` (blocks all traffic until overridden at runtime).
 - **Runtime**: set `MT_HOSTNAME` in the environment (e.g. via `.env`) — the Squid entrypoint re-renders the config on startup.
 
-The dev config (`docker/squid/squid-dev.conf`) is a static file mounted as a read-only volume. Add your ManicTime server hostname there manually; `MT_HOSTNAME` has no effect in dev.
+The dev config (`docker/squid/squid-dev.conf.template`) works the same way as production — `MT_HOSTNAME` from `.env` is substituted at container startup. The dev template also includes extra allowlist entries for package registries and Claude Code.
 
 ## Development
 
