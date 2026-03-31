@@ -73,8 +73,13 @@ class ManicTimeClient:
         if self._token_endpoint is None:
             self._discover_token_endpoint()
 
+        token_endpoint = self._token_endpoint
+        if token_endpoint is None:
+            msg = "Token endpoint not discovered"
+            raise ManicTimeAPIError(0, msg)
+
         response = self._http.post(
-            self._token_endpoint,
+            token_endpoint,
             data={
                 "grant_type": "password",
                 "username": self._username,
