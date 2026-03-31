@@ -19,7 +19,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  ruff:
+  code-quality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -45,79 +45,18 @@ jobs:
       - name: Ruff format (check only)
         run: uv run ruff format --check .
 
-  pylint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 1
+      - name: Pylint
+        run: uv run pylint app --msg-template="{path}:{line} [{msg_id}({symbol}), {obj}] {msg}" --exit-zero
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version-file: "pyproject.toml"
-
-      - name: Install dependencies
-        run: uv sync --frozen
-
-      - name: Run Pylint
-        # We run it on the 'app' directory as per your local test
-        run: uv run pylint app --msg-template="{path}:{line} [{msg_id}({symbol}), {obj}] {msg}"  --exit-zero
-
-  ty:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 1
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version-file: "pyproject.toml"
-
-      - name: Install dependencies
-        run: uv sync --frozen
-
-      - name: Run ty
+      - name: ty
         run: uv run ty check .
 
-  pytest:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 1
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version-file: "pyproject.toml"
-
-      - name: Install dependencies
-        run: uv sync --frozen
-
-      - name: Run tests
+      - name: Pytest
         run: uv run pytest
 
   docker-publish:
     runs-on: ubuntu-latest
-    needs: [ruff, pylint, ty, pytest]
+    needs: [code-quality]
     if: |
       github.ref == 'refs/heads/main' || 
       github.event_name == 'release'
