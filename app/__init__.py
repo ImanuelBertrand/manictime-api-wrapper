@@ -27,6 +27,10 @@ def create_app():
         os.environ.get("CACHE_DEFAULT_TIMEOUT", 300)
     )
 
+    app.config["RATELIMIT_STORAGE_URI"] = os.environ.get(
+        "RATELIMIT_STORAGE_URI", "memory://"
+    )
+
     cache.init_app(app)
     limiter.init_app(app)
 
