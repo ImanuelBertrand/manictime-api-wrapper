@@ -32,6 +32,9 @@ LABEL org.opencontainers.image.url="https://github.com/ImanuelBertrand/manictime
 
 WORKDIR /app
 
+RUN groupadd -g 1001 appgroup && \
+    useradd -u 1000 -g 1001 -m appuser
+
 COPY --from=builder /venv /venv
 COPY . .
 
@@ -40,6 +43,8 @@ ENV PATH="/venv/bin:$PATH"
 
 COPY docker/entrypoint.sh docker/entrypoint.sh
 RUN chmod +x docker/entrypoint.sh
+
+USER appuser
 
 ENTRYPOINT ["./docker/entrypoint.sh"]
 
@@ -61,16 +66,14 @@ ENTRYPOINT ["/squid-entrypoint.sh"]
 # --- Development Stage ---
 FROM production AS development
 
+USER root
+
 COPY --from=builder /usr/local/bin/uv /usr/local/bin/uv
 RUN uv sync --frozen
 
 RUN apt-get update && apt-get install -y \
     curl git \
     && rm -rf /var/lib/apt/lists/*
-
-# Create group (gid 1001) and user (uid 1000) matching typical host IDs
-RUN groupadd -g 1001 appgroup && \
-    useradd -u 1000 -g 1001 -m appuser
 
 RUN chown -R appuser:appgroup /venv
 

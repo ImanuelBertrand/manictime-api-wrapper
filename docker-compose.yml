@@ -19,6 +19,13 @@ services:
       - HTTPS_PROXY=http://squid:3128
       - HTTP_PROXY=http://squid:3128
       - NO_PROXY=localhost,127.0.0.1
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+      start_interval: 2s
     depends_on:
       squid:
         condition: service_healthy
