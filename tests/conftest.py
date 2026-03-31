@@ -1,16 +1,18 @@
 import os
+from unittest.mock import MagicMock
 
 import pytest
 
-# Set required env vars before importing the app
-os.environ.setdefault("SECRET_KEY", "test-secret")
-os.environ.setdefault("MT_SERVER_URL", "http://localhost")
-os.environ.setdefault("MT_USERNAME", "test")
-os.environ.setdefault("MT_PASSWORD", "test")
-os.environ.setdefault("API_KEY", "test-api-key")
+# Force test env vars (overrides any .env values from Docker)
+os.environ["SECRET_KEY"] = "test-secret"
+os.environ["MT_SERVER_URL"] = "http://localhost"
+os.environ["MT_USERNAME"] = "test"
+os.environ["MT_PASSWORD"] = "test"
+os.environ["API_KEY"] = "test-api-key"
 
 
 from app import create_app
+from app.mt_client import ManicTimeClient
 
 
 @pytest.fixture
@@ -21,5 +23,12 @@ def app():
 
 
 @pytest.fixture
-def client(app):
+def mock_mt_client(app):
+    mock = MagicMock(spec=ManicTimeClient)
+    app.extensions["mt_client"] = mock
+    return mock
+
+
+@pytest.fixture
+def client(app, mock_mt_client):
     return app.test_client()

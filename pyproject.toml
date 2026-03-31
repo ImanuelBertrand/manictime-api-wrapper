@@ -61,6 +61,8 @@ select = [
 ]
 per-file-ignores = { "tests/*" = [
     "S101",
+    "S105",
+    "SLF001",
     "PLR2004",
     "PLC0415",
 ] }
@@ -75,3 +77,13 @@ timeout = 10
 [tool.pylint.main]
 # Tell pylint to look in the current directory for the 'app' folder
 init-hook = "import sys; sys.path.append('.')"
+
+[tool.pylint.DESIGN]
+max-args = 8
+max-positional-arguments = 8
+max-locals = 25
+max-attributes = 15
+
+[tool.ty.environment]
+python-version = "3.14"
+root = ["."]

@@ -1,4 +1,7 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, abort, current_app, jsonify, request
+
+from . import cache
+from .auth import require_api_key
 
 bp = Blueprint("main", __name__)
 
@@ -6,3 +9,40 @@ bp = Blueprint("main", __name__)
 @bp.get("/health")
 def health():
     return jsonify({"status": "ok"})
+
+
+@bp.get("/api/timelines")
+@require_api_key
+@cache.cached()
+def timelines():
+    client = current_app.extensions["mt_client"]
+    return jsonify(client.get_timelines())
+
+
+@bp.get("/api/timelines/<timeline_key>/activities")
+@require_api_key
+@cache.cached()
+def activities(timeline_key: str):
+    from_time = request.args.get("fromTime")
+    to_time = request.args.get("toTime")
+    if not from_time or not to_time:
+        abort(400, description="fromTime and toTime query parameters are required")
+    client = current_app.extensions["mt_client"]
+    return jsonify(client.get_activities(timeline_key, from_time, to_time))
+
+
+@bp.get("/api/tags")
+@require_api_key
+@cache.cached()
+def tags():
+    get_all = request.args.get("all", "").lower() == "true"
+    client = current_app.extensions["mt_client"]
+    return jsonify(client.get_tag_combinations(get_all=get_all))
+
+
+@bp.get("/api/screenshots")
+@require_api_key
+@cache.cached()
+def screenshots():
+    client = current_app.extensions["mt_client"]
+    return jsonify(client.get_screenshots())
