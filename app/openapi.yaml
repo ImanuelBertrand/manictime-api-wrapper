@@ -1,0 +1,193 @@
+openapi: "3.1.0"
+info:
+  title: ManicTime API Wrapper
+  version: "0.1.0"
+  description: >
+    Read-only API wrapper around a ManicTime Server instance.
+    Exposes timeline, activity, tag, and screenshot data for
+    downstream consumption.
+
+servers:
+  - url: http://localhost:8000
+    description: Local development
+
+security:
+  - apiKeyAuth: []
+
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded]
+        manictime:
+          type: boolean
+          description: Present only when deep=true
+      required: [status]
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: >
+        Returns service health. Pass `deep=true` to also verify
+        connectivity to the ManicTime server (returns 503 if unreachable).
+      security: []
+      parameters:
+        - name: deep
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: ["true", "false"]
+          description: When "true", checks ManicTime connectivity.
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+        "503":
+          description: Degraded — ManicTime unreachable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
+  /api/timelines:
+    get:
+      summary: List timelines
+      description: Returns all timelines from the ManicTime server.
+      responses:
+        "200":
+          description: Timeline list
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/timelines/{timeline_key}/activities:
+    get:
+      summary: Get activities for a timeline
+      description: >
+        Returns activity entities for the given timeline within a date range.
+        Both `fromTime` and `toTime` are required and must be valid
+        ISO 8601 dates or datetimes.
+      parameters:
+        - name: timeline_key
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^[\\w-]{1,128}$"
+          description: Timeline identifier (alphanumeric, underscore, hyphen; 1-128 chars).
+        - name: fromTime
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: Start of the date range (ISO 8601).
+        - name: toTime
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: End of the date range (ISO 8601).
+      responses:
+        "200":
+          description: Activity list
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/tags:
+    get:
+      summary: List tag combinations
+      description: Returns tag combinations from ManicTime.
+      parameters:
+        - name: all
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: ["true", "false"]
+          description: When "true", returns all tag combinations.
+      responses:
+        "200":
+          description: Tag combination list
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/screenshots:
+    get:
+      summary: List screenshots
+      description: Returns screenshot data from ManicTime.
+      responses:
+        "200":
+          description: Screenshot list
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/openapi.yaml:
+    get:
+      summary: OpenAPI specification
+      security: []
+      description: Returns this OpenAPI spec.
+      responses:
+        "200":
+          description: OpenAPI YAML document
+          content:
+            text/yaml: {}

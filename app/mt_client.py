@@ -24,7 +24,7 @@ class ManicTimeClient:
     def check_health(self) -> bool:
         try:
             self._request("/api/timelines")
-        except (ManicTimeAPIError, httpx.HTTPError):
+        except ManicTimeAPIError, httpx.HTTPError:
             return False
         return True
 

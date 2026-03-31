@@ -1,7 +1,8 @@
 import re
 from datetime import datetime
+from pathlib import Path
 
-from flask import Blueprint, abort, current_app, jsonify, request
+from flask import Blueprint, Response, abort, current_app, jsonify, request
 
 from . import cache
 from .auth import require_api_key
@@ -27,6 +28,12 @@ def health():
         status = "ok" if mt_ok else "degraded"
         return jsonify({"status": status, "manictime": mt_ok}), 200 if mt_ok else 503
     return jsonify({"status": "ok"})
+
+
+@bp.get("/api/openapi.yaml")
+def openapi_spec():
+    spec_path = Path(__file__).parent / "openapi.yaml"
+    return Response(spec_path.read_text(), mimetype="text/yaml")
 
 
 @bp.get("/api/timelines")
