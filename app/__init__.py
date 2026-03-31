@@ -1,8 +1,9 @@
 import logging
 import os
+import time
 
 import httpx
-from flask import Flask, jsonify
+from flask import Flask, g, jsonify, request
 from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -51,6 +52,25 @@ def create_app():
     def handle_http_error(_error):
         logger.warning("Upstream connection error: %s", _error)
         return jsonify({"error": "Upstream connection failed"}), 502
+
+    @app.before_request
+    def start_timer():
+        g.start_time = time.monotonic()
+
+    @app.after_request
+    def log_request(response):
+        start = getattr(g, "start_time", None)
+        if start is None:
+            return response
+        duration_ms = (time.monotonic() - start) * 1000
+        logger.info(
+            "%s %s %s %.1fms",
+            request.method,
+            request.path,
+            response.status_code,
+            duration_ms,
+        )
+        return response
 
     from .routes import bp  # noqa: PLC0415
 
