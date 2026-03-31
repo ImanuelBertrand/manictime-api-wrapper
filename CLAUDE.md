@@ -39,12 +39,17 @@ The downstream agent is responsible for task analysis and timesheet generation. 
 | `MT_USERNAME` | ManicTime login username |
 | `MT_PASSWORD` | ManicTime login password |
 | `API_KEY` | Shared secret for clients of this wrapper |
+| `MT_HOSTNAME` | ManicTime server hostname (used by Squid allowlist) |
 | `CACHE_DEFAULT_TIMEOUT` | Cache TTL in seconds (default: 300) |
 
 ## Squid allowlist
 
-- **Production** (`docker/squid/squid-prod.conf`): add the ManicTime server hostname to `allowed_domains`.
-- **Dev** (`docker/squid/squid-dev.conf`): also allows PyPI, GitHub, and Anthropic domains (for uv and Claude Code inside the dev container).
+The production Squid config is generated from `docker/squid/squid-prod.conf.template` using `MT_HOSTNAME`:
+
+- **Build time**: pass `--build-arg MT_HOSTNAME=<hostname>` — bakes the hostname into the image. The CI pipeline does not set this, so published images default to `example.invalid` (blocks all traffic until overridden at runtime).
+- **Runtime**: set `MT_HOSTNAME` in the environment (e.g. via `.env`) — the Squid entrypoint re-renders the config on startup.
+
+The dev config (`docker/squid/squid-dev.conf`) is a static file mounted as a read-only volume. Add your ManicTime server hostname there manually; `MT_HOSTNAME` has no effect in dev.
 
 ## Development
 

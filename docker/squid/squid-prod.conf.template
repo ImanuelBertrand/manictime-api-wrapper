@@ -1,5 +1,5 @@
-# Allowlisted destinations — add your ManicTime server hostname here
-# acl allowed_domains dstdomain your-manictime-server.example.com
+# Allowlisted destinations — set at build time via ARG MT_HOSTNAME or at runtime via ENV MT_HOSTNAME
+acl allowed_domains dstdomain ${MT_HOSTNAME}
 
 # Standard ports
 acl SSL_ports port 443

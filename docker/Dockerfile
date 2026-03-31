@@ -45,7 +45,18 @@ ENTRYPOINT ["./docker/entrypoint.sh"]
 
 # --- Squid Stage ---
 FROM ubuntu/squid:6.13-25.04_beta AS squid
-COPY docker/squid/squid-prod.conf /etc/squid/squid.conf
+
+ARG MT_HOSTNAME=example.invalid
+
+RUN apt-get update && apt-get install -y --no-install-recommends gettext-base && rm -rf /var/lib/apt/lists/*
+
+COPY docker/squid/squid-prod.conf.template /etc/squid/squid.conf.template
+COPY docker/squid/squid-entrypoint.sh /squid-entrypoint.sh
+
+RUN chmod +x /squid-entrypoint.sh && \
+    envsubst '${MT_HOSTNAME}' < /etc/squid/squid.conf.template > /etc/squid/squid.conf
+
+ENTRYPOINT ["/squid-entrypoint.sh"]
 
 # --- Development Stage ---
 FROM production AS development

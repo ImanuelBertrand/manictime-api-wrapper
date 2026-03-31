@@ -29,6 +29,8 @@ services:
     image: ghcr.io/imanuelbertrand/mt_api_wrapper-squid:latest
     container_name: mt_api_wrapper_squid
     restart: always
+    environment:
+      - MT_HOSTNAME=${MT_HOSTNAME}
     networks:
       - mt_api_wrapper_network
       - mt_api_wrapper_external

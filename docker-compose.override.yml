@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: docker/Dockerfile
       target: squid
+      args:
+        MT_HOSTNAME: ${MT_HOSTNAME:-}
     volumes:
       - ./docker/squid/squid-dev.conf:/etc/squid/squid.conf:ro
 
