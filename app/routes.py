@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 
 from flask import Blueprint, abort, current_app, jsonify, request
 
@@ -6,6 +7,14 @@ from . import cache
 from .auth import require_api_key
 
 TIMELINE_KEY_PATTERN = re.compile(r"^[\w-]{1,128}$")
+
+
+def _validate_iso_datetime(value: str, name: str) -> None:
+    try:
+        datetime.fromisoformat(value)
+    except ValueError:
+        abort(400, description=f"{name} must be a valid ISO 8601 date or datetime")
+
 
 bp = Blueprint("main", __name__)
 
@@ -33,6 +42,8 @@ def activities(timeline_key: str):
     to_time = request.args.get("toTime")
     if not from_time or not to_time:
         abort(400, description="fromTime and toTime query parameters are required")
+    _validate_iso_datetime(from_time, "fromTime")
+    _validate_iso_datetime(to_time, "toTime")
     client = current_app.extensions["mt_client"]
     return jsonify(client.get_activities(timeline_key, from_time, to_time))
 

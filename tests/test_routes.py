@@ -27,6 +27,31 @@ class TestActivities:
             "key1", "2026-03-01", "2026-03-31"
         )
 
+    def test_accepts_datetime_with_time(self, client, mock_mt_client):
+        mock_mt_client.get_activities.return_value = {"entities": []}
+        response = client.get(
+            "/api/timelines/key1/activities"
+            "?fromTime=2026-03-01T00:00:00&toTime=2026-03-31T23:59:59",
+            headers=API_HEADERS,
+        )
+        assert response.status_code == 200
+
+    def test_invalid_from_time_returns_400(self, client):
+        response = client.get(
+            "/api/timelines/key1/activities?fromTime=not-a-date&toTime=2026-03-31",
+            headers=API_HEADERS,
+        )
+        assert response.status_code == 400
+        assert b"fromTime" in response.data
+
+    def test_invalid_to_time_returns_400(self, client):
+        response = client.get(
+            "/api/timelines/key1/activities?fromTime=2026-03-01&toTime=garbage",
+            headers=API_HEADERS,
+        )
+        assert response.status_code == 400
+        assert b"toTime" in response.data
+
     def test_missing_params_returns_400(self, client):
         response = client.get(
             "/api/timelines/key1/activities",
@@ -37,6 +62,13 @@ class TestActivities:
     def test_missing_to_time_returns_400(self, client):
         response = client.get(
             "/api/timelines/key1/activities?fromTime=2026-03-01",
+            headers=API_HEADERS,
+        )
+        assert response.status_code == 400
+
+    def test_invalid_timeline_key_returns_400(self, client):
+        response = client.get(
+            "/api/timelines/key<script>/activities?fromTime=2026-03-01&toTime=2026-03-31",
             headers=API_HEADERS,
         )
         assert response.status_code == 400
