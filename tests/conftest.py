@@ -13,13 +13,13 @@ os.environ.setdefault("API_KEY", "test-api-key")
 from app import create_app
 
 
-@pytest.fixture()
+@pytest.fixture
 def app():
     app = create_app()
     app.config["TESTING"] = True
-    yield app
+    return app
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(app):
     return app.test_client()

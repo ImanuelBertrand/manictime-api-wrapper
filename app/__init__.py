@@ -1,4 +1,5 @@
 import os
+
 from flask import Flask
 from flask_caching import Cache
 
@@ -21,7 +22,7 @@ def create_app():
 
     cache.init_app(app)
 
-    from .routes import bp
+    from .routes import bp  # noqa: PLC0415
 
     app.register_blueprint(bp)
 

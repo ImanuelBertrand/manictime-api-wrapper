@@ -16,3 +16,62 @@ dev = [
     "ruff>=0.11",
     "ty>=0.0.1a7",
 ]
+
+
+[tool.ruff]
+line-length = 88
+target-version = "py314"
+exclude = [".git", "__pycache__", "venv_*"]
+
+[tool.ruff.lint]
+select = [
+    "A", # flake8-builtins
+    "ASYNC", # flake8-async
+    "B", # flake8-bugbear
+    "BLE", # flake8-blind-except
+    "C4", # flake8-comprehensions
+    "C90", # mccabe
+    "DTZ", # flake8-datetimez
+    "E", # Error
+    "ERA", # eradicate
+    "F", # Pyflakes
+    "FBT", # flake8-boolean-trap
+    "FURB", # refurb
+    "G", # flake8-logging-format
+    "I", # isort
+    "ISC", # flake8-implicit-str-concat
+    "LOG", # flake8-logging
+    "N", # pep8-naming
+    "PERF", # Perflint
+    "PIE", # flake8-pie
+    "PLC", # Pylint Convention
+    "PLE", # Pylint Error
+    "PLR", # Pylint Refactor
+    "PT", # flake8-pytest-style
+    "RET", # flake8-return
+    "RUF", # Ruff-specific rules
+    "S", # flake8-bandit
+    "SIM", # flake8-simplify
+    "SLF", # flake8-self (private member access)
+    "TC", # flake8-type-checking
+    "TID", # flake8-tidy-imports
+    "TRY", # tryceratops
+    "UP", # pyupgrade
+    "W", # Warning
+]
+per-file-ignores = { "tests/*" = [
+    "S101",
+    "PLR2004",
+    "PLC0415",
+] }
+
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+python_files = "test_*.py"
+timeout = 10
+
+[tool.pylint.main]
+# Tell pylint to look in the current directory for the 'app' folder
+init-hook = "import sys; sys.path.append('.')"
