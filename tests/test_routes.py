@@ -100,6 +100,25 @@ class TestScreenshots:
         assert response.json["screenshots"] == []
 
 
+class TestHealthCheck:
+    def test_shallow_health(self, client):
+        response = client.get("/health")
+        assert response.status_code == 200
+        assert response.json == {"status": "ok"}
+
+    def test_deep_health_ok(self, client, mock_mt_client):
+        mock_mt_client.check_health.return_value = True
+        response = client.get("/health?deep=true")
+        assert response.status_code == 200
+        assert response.json == {"status": "ok", "manictime": True}
+
+    def test_deep_health_degraded(self, client, mock_mt_client):
+        mock_mt_client.check_health.return_value = False
+        response = client.get("/health?deep=true")
+        assert response.status_code == 503
+        assert response.json == {"status": "degraded", "manictime": False}
+
+
 class TestErrorHandling:
     def test_mt_api_error_returns_upstream_status(self, client, mock_mt_client):
         mock_mt_client.get_timelines.side_effect = ManicTimeAPIError(404, "Not Found")

@@ -21,6 +21,11 @@ bp = Blueprint("main", __name__)
 
 @bp.get("/health")
 def health():
+    if request.args.get("deep", "").lower() == "true":
+        client = current_app.extensions["mt_client"]
+        mt_ok = client.check_health()
+        status = "ok" if mt_ok else "degraded"
+        return jsonify({"status": status, "manictime": mt_ok}), 200 if mt_ok else 503
     return jsonify({"status": "ok"})
 
 

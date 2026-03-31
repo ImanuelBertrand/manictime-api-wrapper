@@ -21,6 +21,13 @@ class ManicTimeClient:
         self._token_endpoint: str | None = None
         self._http = httpx.Client(timeout=30.0)
 
+    def check_health(self) -> bool:
+        try:
+            self._request("/api/timelines")
+        except (ManicTimeAPIError, httpx.HTTPError):
+            return False
+        return True
+
     def get_timelines(self) -> dict:
         return self._request("/api/timelines")
 
