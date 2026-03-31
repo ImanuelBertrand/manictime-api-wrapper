@@ -24,7 +24,6 @@ Downstream AI agent → [API key auth] → This wrapper → [Squid] → ManicTim
 - **Flask-Limiter** — rate limiting (60 requests/minute default)
 - **Gunicorn** — WSGI server
 - **Squid** — forward proxy / egress firewall
-- **Nginx** — reverse proxy with security headers (CSP, X-Frame-Options, etc.)
 
 ## Project context
 
@@ -57,7 +56,6 @@ app/                        # Flask application package
 docker/                     # Docker configuration
   Dockerfile                # Multi-stage: builder → production → development, plus squid
   entrypoint.sh             # Gunicorn startup
-  nginx.conf                # Reverse proxy with security headers
   squid/                    # Squid proxy configs
     squid-prod.conf.template
     squid-dev.conf.template
