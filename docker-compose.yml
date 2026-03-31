@@ -1,0 +1,48 @@
+services:
+  web:
+    image: ghcr.io/imanuelbertrand/mt_api_wrapper:latest
+    container_name: mt_api_wrapper_app
+    restart: always
+    expose:
+      - "8000"
+    environment:
+      - FLASK_ENV=${FLASK_ENV}
+      - SECRET_KEY=${SECRET_KEY}
+      - SERVER_NAME=${SERVER_NAME}
+      - APPLICATION_ROOT=${APPLICATION_ROOT}
+      - PREFERRED_URL_SCHEME=${PREFERRED_URL_SCHEME}
+      - MT_SERVER_URL=${MT_SERVER_URL}
+      - MT_USERNAME=${MT_USERNAME}
+      - MT_PASSWORD=${MT_PASSWORD}
+      - API_KEY=${API_KEY}
+      - CACHE_DEFAULT_TIMEOUT=${CACHE_DEFAULT_TIMEOUT:-300}
+      - HTTPS_PROXY=http://squid:3128
+      - HTTP_PROXY=http://squid:3128
+      - NO_PROXY=localhost,127.0.0.1
+    depends_on:
+      squid:
+        condition: service_healthy
+    networks:
+      - mt_api_wrapper_network
+
+  squid:
+    image: ghcr.io/imanuelbertrand/mt_api_wrapper-squid:latest
+    container_name: mt_api_wrapper_squid
+    restart: always
+    networks:
+      - mt_api_wrapper_network
+      - mt_api_wrapper_external
+    healthcheck:
+      test: [ "CMD-SHELL", "bash -c 'echo > /dev/tcp/127.0.0.1/3128'" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+      start_interval: 1s
+
+networks:
+  mt_api_wrapper_network:
+    driver: bridge
+    internal: true
+  mt_api_wrapper_external:
+    driver: bridge

@@ -1,0 +1,21 @@
+services:
+  squid:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: squid
+    volumes:
+      - ./docker/squid/squid-dev.conf:/etc/squid/squid.conf:ro
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: development
+    volumes:
+      - .:/app
+      - ./docker/.claude.json:/home/appuser/.claude.json
+      - ./docker/.claude/:/home/appuser/.claude/
+    environment:
+      - SERVER_NAME=${SERVER_NAME:-localhost:8000}
+      - PREFERRED_URL_SCHEME=${PREFERRED_URL_SCHEME:-http}
