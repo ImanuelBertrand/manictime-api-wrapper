@@ -15,11 +15,14 @@ def create_app():
     app.config["API_KEY"] = os.environ["API_KEY"]
 
     app.config["CACHE_TYPE"] = "SimpleCache"
-    app.config["CACHE_DEFAULT_TIMEOUT"] = int(os.environ.get("CACHE_DEFAULT_TIMEOUT", 300))
+    app.config["CACHE_DEFAULT_TIMEOUT"] = int(
+        os.environ.get("CACHE_DEFAULT_TIMEOUT", 300)
+    )
 
     cache.init_app(app)
 
     from .routes import bp
+
     app.register_blueprint(bp)
 
     return app
