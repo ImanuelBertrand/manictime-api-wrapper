@@ -1,12 +1,16 @@
+import logging
 import os
 
 import httpx
 from flask import Flask, jsonify
 from flask_caching import Cache
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from .mt_client import ManicTimeAPIError, ManicTimeClient
 
 cache = Cache()
+limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
 
 
 def create_app():
@@ -24,6 +28,7 @@ def create_app():
     )
 
     cache.init_app(app)
+    limiter.init_app(app)
 
     app.extensions["mt_client"] = ManicTimeClient(
         server_url=app.config["MT_SERVER_URL"],
@@ -31,12 +36,16 @@ def create_app():
         password=app.config["MT_PASSWORD"],
     )
 
+    logger = logging.getLogger(__name__)
+
     @app.errorhandler(ManicTimeAPIError)
     def handle_mt_error(error):
-        return jsonify({"error": error.detail}), error.status_code
+        logger.warning("ManicTime API error %d: %s", error.status_code, error.detail)
+        return jsonify({"error": "Upstream request failed"}), error.status_code
 
     @app.errorhandler(httpx.HTTPError)
     def handle_http_error(_error):
+        logger.warning("Upstream connection error: %s", _error)
         return jsonify({"error": "Upstream connection failed"}), 502
 
     from .routes import bp  # noqa: PLC0415

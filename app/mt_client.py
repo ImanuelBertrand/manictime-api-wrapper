@@ -93,7 +93,12 @@ class ManicTimeClient:
 
         for link in response.json().get("links", []):
             if link.get("rel") == "manictime/token":
-                self._token_endpoint = link["href"]
+                href = link["href"]
+                if not href.startswith(self._server_url):
+                    raise ManicTimeAPIError(
+                        502, "Token endpoint not found in API response"
+                    )
+                self._token_endpoint = href
                 return
 
         raise ManicTimeAPIError(500, "Token endpoint not found in API response")

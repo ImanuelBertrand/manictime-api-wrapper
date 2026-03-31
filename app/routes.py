@@ -1,7 +1,11 @@
+import re
+
 from flask import Blueprint, abort, current_app, jsonify, request
 
 from . import cache
 from .auth import require_api_key
+
+TIMELINE_KEY_PATTERN = re.compile(r"^[\w-]{1,128}$")
 
 bp = Blueprint("main", __name__)
 
@@ -21,8 +25,10 @@ def timelines():
 
 @bp.get("/api/timelines/<timeline_key>/activities")
 @require_api_key
-@cache.cached()
+@cache.cached(query_string=True)
 def activities(timeline_key: str):
+    if not TIMELINE_KEY_PATTERN.match(timeline_key):
+        abort(400, description="Invalid timeline key")
     from_time = request.args.get("fromTime")
     to_time = request.args.get("toTime")
     if not from_time or not to_time:
@@ -33,7 +39,7 @@ def activities(timeline_key: str):
 
 @bp.get("/api/tags")
 @require_api_key
-@cache.cached()
+@cache.cached(query_string=True)
 def tags():
     get_all = request.args.get("all", "").lower() == "true"
     client = current_app.extensions["mt_client"]

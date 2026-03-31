@@ -73,4 +73,4 @@ class TestErrorHandling:
         mock_mt_client.get_timelines.side_effect = ManicTimeAPIError(404, "Not Found")
         response = client.get("/api/timelines", headers=API_HEADERS)
         assert response.status_code == 404
-        assert response.json["error"] == "Not Found"
+        assert response.json["error"] == "Upstream request failed"
