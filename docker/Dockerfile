@@ -77,8 +77,8 @@ RUN apt-get update && apt-get install -y \
 
 RUN chown -R appuser:appgroup /venv
 
-# Install Claude Code as appuser so it lands in /home/appuser/.local/bin
-RUN su - appuser -c "curl -fsSL https://claude.ai/install.sh | bash"
+RUN mkdir -p /home/appuser/.local && \
+    chown -R appuser:appgroup /home/appuser/.local
 
 ENV PATH="/home/appuser/.local/bin:$PATH"
 ENV FLASK_ENV=development

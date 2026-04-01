@@ -55,6 +55,7 @@ app/                        # Flask application package
   openapi.yaml              # OpenAPI 3.1 spec
 docker/                     # Docker configuration
   Dockerfile                # Multi-stage: builder → production → development, plus squid
+  claude.sh                 # Lazy Claude Code installer/launcher
   entrypoint.sh             # Gunicorn startup
   squid/                    # Squid proxy configs
     squid-prod.conf.template
@@ -111,7 +112,7 @@ curl http://localhost:8000/health
 
 The dev image mounts the project root into the container, so code changes are reflected without rebuilding.
 
-**Claude Code runs inside the dev container.** The development Docker image installs the Claude Code CLI, and `docker-compose.override.yml` mounts the Claude config directory. Run `make claude` to open a Claude Code session in the container. The dev Squid allowlist includes Anthropic domains so Claude Code can reach its backend.
+**Claude Code runs inside the dev container.** Claude Code is not baked into the Docker image — it is installed lazily on first run into a named volume (`claude_local`) mounted at `/home/appuser/.local`. Run `make claude` to install (if needed) and open a Claude Code session. The installation persists across container restarts; delete the volume to force a reinstall. The dev Squid allowlist includes Anthropic domains so Claude Code can reach its backend.
 
 ### Makefile targets
 

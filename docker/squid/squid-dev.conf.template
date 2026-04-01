@@ -9,6 +9,7 @@ acl allowed_domains dstdomain .pypi.org
 acl allowed_domains dstdomain files.pythonhosted.org
 acl allowed_domains dstdomain .github.com
 acl allowed_domains dstdomain docs.manictime.com
+acl allowed_domains dstdomain storage.googleapis.com
 
 # Standard ports
 acl SSL_ports port 443

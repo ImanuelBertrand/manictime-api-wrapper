@@ -41,7 +41,7 @@ shell:
 	$(EXEC) bash
 
 claude:
-	$(EXEC) claude --dangerously-skip-permissions
+	$(EXEC) bash docker/claude.sh
 
 test:
 	$(EXEC) bash -c 'python -m pytest $(args)'

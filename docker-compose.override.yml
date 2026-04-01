@@ -20,6 +20,10 @@ services:
       - .:/app
       - ./docker/.claude.json:/home/appuser/.claude.json
       - ./docker/.claude/:/home/appuser/.claude/
+      - claude_local:/home/appuser/.local
     environment:
       - SERVER_NAME=${SERVER_NAME:-localhost:8000}
       - PREFERRED_URL_SCHEME=${PREFERRED_URL_SCHEME:-http}
+
+volumes:
+  claude_local:
