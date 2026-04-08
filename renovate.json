@@ -4,7 +4,7 @@
     "config:recommended"
   ],
   "rangeStrategy": "bump",
-  "minimumReleaseAge": "14 days",
+  "minimumReleaseAge": "7 days",
   "internalChecksFilter": "strict",
   "packageRules": [
     {
