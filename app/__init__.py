@@ -17,6 +17,15 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
 def create_app():
     app = Flask(__name__)
 
+    # Propagate app loggers through gunicorn's error handler so INFO-level
+    # messages appear in docker logs. Falls back to stderr when not under gunicorn.
+    gunicorn_logger = logging.getLogger("gunicorn.error")
+    if gunicorn_logger.handlers:
+        logging.root.handlers = gunicorn_logger.handlers
+        logging.root.setLevel(gunicorn_logger.level)
+    else:
+        logging.basicConfig(level=logging.INFO)
+
     app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
     app.config["MT_SERVER_URL"] = os.environ["MT_SERVER_URL"]
     app.config["MT_USERNAME"] = os.environ["MT_USERNAME"]
