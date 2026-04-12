@@ -3,8 +3,8 @@ services:
     image: ghcr.io/imanuelbertrand/mt_api_wrapper:latest
     container_name: mt_api_wrapper_app
     restart: always
-    expose:
-      - "8000"
+    ports:
+      - "23982:8000"
     environment:
       - FLASK_ENV=${FLASK_ENV}
       - SECRET_KEY=${SECRET_KEY}
