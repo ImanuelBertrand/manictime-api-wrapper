@@ -102,7 +102,7 @@ class ManicTimeClient:
         _logger.info("Discovering token endpoint from %s", url)
         response = self._http.get(url, headers={"Accept": MT_ACCEPT_HEADER})
 
-        if not response.is_success:
+        if response.status_code not in (HTTPStatus.OK, HTTPStatus.UNAUTHORIZED):
             _logger.error(
                 "Failed to discover API endpoints (status %d): %s",
                 response.status_code,
