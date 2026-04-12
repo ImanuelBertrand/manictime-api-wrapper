@@ -15,6 +15,7 @@ acl allowed_domains dstdomain storage.googleapis.com
 acl SSL_ports port 443
 acl Safe_ports port 80
 acl Safe_ports port 443
+acl Safe_ports port ${MT_PORT}
 acl CONNECT method CONNECT
 
 # Deny requests to unknown ports

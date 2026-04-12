@@ -5,6 +5,7 @@ acl allowed_domains dstdomain ${MT_HOSTNAME}
 acl SSL_ports port 443
 acl Safe_ports port 80
 acl Safe_ports port 443
+acl Safe_ports port ${MT_PORT}
 acl CONNECT method CONNECT
 
 # Deny requests to unknown ports
