@@ -1,10 +1,12 @@
-from http import HTTPStatus
 import logging
+from http import HTTPStatus
+
 import httpx
 
 MT_ACCEPT_HEADER = "application/vnd.manictime.v3+json"
 
 _logger = logging.getLogger(__name__)
+
 
 class ManicTimeAPIError(Exception):
     def __init__(self, status_code: int, detail: str) -> None:
