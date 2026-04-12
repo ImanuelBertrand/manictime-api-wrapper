@@ -104,13 +104,13 @@ class ManicTimeClient:
 
         try:
             body = response.json()
-        except Exception:
-            _logger.error(
+        except Exception as e:
+            _logger.exception(
                 "Failed to parse discovery response (status %d): %s",
                 response.status_code,
                 response.text,
             )
-            raise ManicTimeAPIError(502, "Failed to discover API endpoints")
+            raise ManicTimeAPIError(502, "Failed to discover API endpoints") from e
 
         for link in body.get("links", []):
             if link.get("rel") == "manictime/token":
