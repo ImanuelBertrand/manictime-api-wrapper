@@ -102,6 +102,14 @@ class ManicTimeClient:
         _logger.info("Discovering token endpoint from %s", url)
         response = self._http.get(url, headers={"Accept": MT_ACCEPT_HEADER})
 
+        if not response.is_success:
+            _logger.error(
+                "Failed to discover API endpoints (status %d): %s",
+                response.status_code,
+                response.text,
+            )
+            raise ManicTimeAPIError(502, "Failed to discover API endpoints")
+
         try:
             body = response.json()
         except Exception as e:
