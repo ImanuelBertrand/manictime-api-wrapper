@@ -1,9 +1,10 @@
 from http import HTTPStatus
-
+import logging
 import httpx
 
 MT_ACCEPT_HEADER = "application/vnd.manictime.v3+json"
 
+_logger = logging.getLogger(__name__)
 
 class ManicTimeAPIError(Exception):
     def __init__(self, status_code: int, detail: str) -> None:
@@ -60,6 +61,7 @@ class ManicTimeClient:
         return response.json()
 
     def _send(self, path: str, *, params: dict | None = None) -> httpx.Response:
+        _logger.info("Sending request to %s%s", self._server_url, path)
         return self._http.get(
             f"{self._server_url}{path}",
             params=params,
@@ -78,6 +80,7 @@ class ManicTimeClient:
             msg = "Token endpoint not discovered"
             raise ManicTimeAPIError(0, msg)
 
+        _logger.info("Authenticating with %s", token_endpoint)
         response = self._http.post(
             token_endpoint,
             data={
@@ -93,12 +96,14 @@ class ManicTimeClient:
         self._token = response.json()["token"]
 
     def _discover_token_endpoint(self) -> None:
+        _logger.info("Discovering token endpoint: %s", self._server_url)
         response = self._http.get(
             f"{self._server_url}/api",
             headers={"Accept": MT_ACCEPT_HEADER},
         )
 
         if not response.is_success:
+            _logger.error("Failed to discover API endpoints: %s", response.text)
             raise ManicTimeAPIError(
                 response.status_code, "Failed to discover API endpoints"
             )
