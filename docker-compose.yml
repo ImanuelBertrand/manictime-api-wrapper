@@ -1,10 +1,22 @@
 services:
-  web:
-    image: ghcr.io/imanuelbertrand/mt_api_wrapper:latest
-    container_name: mt_api_wrapper_app
+  ingress:
+    image: alpine/socat:latest
+    container_name: mt_api_wrapper_ingress
     restart: always
     ports:
-      - "23982:8000"
+      - "127.0.0.1:23982:8000"
+    networks:
+      - mt_api_wrapper_network
+      - mt_api_wrapper_publish
+    command: tcp-listen:8000,fork,reuseaddr tcp-connect:web:8000
+    depends_on:
+      web:
+        condition: service_healthy
+
+  web:
+    image: ghcr.io/imanuelbertrand/manictime-api-wrapper:latest
+    container_name: mt_api_wrapper_app
+    restart: always
     environment:
       - FLASK_ENV=${FLASK_ENV}
       - SECRET_KEY=${SECRET_KEY}
@@ -33,7 +45,7 @@ services:
       - mt_api_wrapper_network
 
   squid:
-    image: ghcr.io/imanuelbertrand/mt_api_wrapper-squid:latest
+    image: ghcr.io/imanuelbertrand/manictime-api-wrapper-squid:latest
     container_name: mt_api_wrapper_squid
     restart: always
     environment:
@@ -53,5 +65,7 @@ networks:
   mt_api_wrapper_network:
     driver: bridge
     internal: true
+  mt_api_wrapper_publish:
+    driver: bridge
   mt_api_wrapper_external:
     driver: bridge
