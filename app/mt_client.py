@@ -98,26 +98,29 @@ class ManicTimeClient:
         self._token = response.json()["token"]
 
     def _discover_token_endpoint(self) -> None:
-        _logger.info("Discovering token endpoint: %s", self._server_url)
-        response = self._http.get(
-            f"{self._server_url}/api",
-            headers={"Accept": MT_ACCEPT_HEADER},
-        )
+        url = f"{self._server_url}/api"
+        _logger.info("Discovering token endpoint from %s", url)
+        response = self._http.get(url, headers={"Accept": MT_ACCEPT_HEADER})
 
-        if not response.is_success:
-            _logger.error("Failed to discover API endpoints: %s", response.text)
-            raise ManicTimeAPIError(
-                response.status_code, "Failed to discover API endpoints"
+        try:
+            body = response.json()
+        except Exception:
+            _logger.error(
+                "Failed to parse discovery response (status %d): %s",
+                response.status_code,
+                response.text,
             )
+            raise ManicTimeAPIError(502, "Failed to discover API endpoints")
 
-        for link in response.json().get("links", []):
+        for link in body.get("links", []):
             if link.get("rel") == "manictime/token":
-                href = link["href"]
-                if not href.startswith(self._server_url):
-                    raise ManicTimeAPIError(
-                        502, "Token endpoint not found in API response"
-                    )
-                self._token_endpoint = href
+                self._token_endpoint = link["href"]
+                _logger.info("Discovered token endpoint: %s", self._token_endpoint)
                 return
 
-        raise ManicTimeAPIError(500, "Token endpoint not found in API response")
+        _logger.error(
+            "Token endpoint not found in discovery response (status %d): %s",
+            response.status_code,
+            response.text,
+        )
+        raise ManicTimeAPIError(502, "Token endpoint not found in API response")
