@@ -73,6 +73,10 @@ class TestAuthenticate:
                 "username": "user",
                 "password": "pass",
             },
+            headers={
+                "Accept": "application/vnd.manictime.v3+json",
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
         )
 
     def test_discovers_endpoint_if_not_set(self, client):

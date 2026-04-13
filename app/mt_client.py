@@ -90,6 +90,10 @@ class ManicTimeClient:
                 "username": self._username,
                 "password": self._password,
             },
+            headers={
+                "Accept": MT_ACCEPT_HEADER,
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
         )
 
         if not response.is_success:
