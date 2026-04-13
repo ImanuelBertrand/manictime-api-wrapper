@@ -17,6 +17,8 @@ services:
     image: ghcr.io/imanuelbertrand/manictime-api-wrapper:latest
     container_name: mt_api_wrapper_app
     restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - FLASK_ENV=${FLASK_ENV}
       - SECRET_KEY=${SECRET_KEY}
