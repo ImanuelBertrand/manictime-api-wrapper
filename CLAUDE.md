@@ -84,6 +84,7 @@ docker-compose.override.yml # Dev overrides (volume mounts, dev squid config)
 | `MT_PASSWORD` | ManicTime login password |
 | `API_KEY` | Shared secret for clients of this wrapper |
 | `MT_HOSTNAME` | ManicTime server hostname (used by Squid allowlist) |
+| `MT_PORT` | ManicTime server port (used by Squid allowlist, default: 80) |
 | `CACHE_DEFAULT_TIMEOUT` | Cache TTL in seconds (default: 300) |
 
 ## Squid allowlist
