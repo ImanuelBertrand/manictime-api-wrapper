@@ -3,7 +3,7 @@
   "extends": [
     "config:recommended"
   ],
-  "rangeStrategy": "bump",
+  "rangeStrategy": "pin",
   "minimumReleaseAge": "7 days",
   "internalChecksFilter": "strict",
   "packageRules": [
