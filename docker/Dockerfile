@@ -1,5 +1,5 @@
 # 1. Use the official uv image for the build stage
-FROM ghcr.io/astral-sh/uv:0.11.2-python3.14-trixie AS builder
+FROM ghcr.io/astral-sh/uv:0.11.8-python3.14-trixie AS builder
 
 # 2. Set the working directory
 WORKDIR /app
