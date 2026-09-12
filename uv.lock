@@ -111,15 +111,15 @@ wheels = [
 
 [[package]]
 name = "flask-caching"
-version = "2.5.0"
+version = "2.5.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cachelib" },
     { name = "flask" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/dc/ce/a54552acb28bd0ac617703780e8f2344a4e5aee7a46936328fe7cf5b3a95/flask_caching-2.5.0.tar.gz", hash = "sha256:5a8779b54695f96e1b4a7a149dd8c6d863433ea66327cde4311ce7fd7b57391f", size = 218694, upload-time = "2026-08-24T18:52:01.459Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a2/74/37c0cfc97444bc639a2854808c55ef61266c3637ab0a64c794b9f6ea1649/flask_caching-2.5.1.tar.gz", hash = "sha256:f75b451fde3faac0e278da72263818134deca8c4ba6bb07b9b3b238991368dae", size = 219102, upload-time = "2026-09-04T18:59:15.541Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fc/51/ce7bc1eb0787acef0fecd6dae3f9f45cf46da5c5a51da79efa1e0eb2724c/flask_caching-2.5.0-py3-none-any.whl", hash = "sha256:8e625acd99759171a428ceb9b669ba6743c11dd9b37ace4e0ea7a3ee34097ccd", size = 34976, upload-time = "2026-08-24T18:52:00.136Z" },
+    { url = "https://files.pythonhosted.org/packages/a3/62/e22db0afb98b481878f22c0cec125d29b33948863b4e3f4a083e610c40c7/flask_caching-2.5.1-py3-none-any.whl", hash = "sha256:a8591b0315f033d1f10ba67e318b82b3179e548306195ec08e8f0c5f8ef287bf", size = 35082, upload-time = "2026-09-04T18:59:13.862Z" },
 ]
 
 [[package]]
@@ -269,7 +269,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "flask", specifier = "==3.1.3" },
-    { name = "flask-caching", specifier = "==2.5.0" },
+    { name = "flask-caching", specifier = "==2.5.1" },
     { name = "flask-limiter", specifier = "==4.1.1" },
     { name = "gunicorn", specifier = "==26.2.0" },
     { name = "httpx", specifier = "==0.28.1" },
