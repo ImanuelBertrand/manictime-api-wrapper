@@ -14,7 +14,7 @@ dependencies = [
 dev = [
     "pytest==9.1.1",
     "pylint==4.1.2",
-    "ruff==0.16.10",
+    "ruff==0.17.0",
     "ty==0.0.85",
     "pytest-timeout==2.4.0",
 ]
