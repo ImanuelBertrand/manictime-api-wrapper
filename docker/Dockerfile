@@ -23,7 +23,7 @@ COPY . .
 RUN uv sync --frozen --no-dev
 
 # --- Production Stage ---
-FROM python:3.14-slim AS production
+FROM python:3.15-slim AS production
 
 LABEL org.opencontainers.image.title="Manictime API wrapper"
 LABEL org.opencontainers.image.description="Provides secure read-only access to a ManicTime server"
