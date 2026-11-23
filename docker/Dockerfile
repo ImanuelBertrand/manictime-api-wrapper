@@ -1,5 +1,6 @@
-# 1. Use the official uv image for the build stage
-FROM ghcr.io/astral-sh/uv:0.12.3-python3.15-trixie AS builder
+# 1. Use the same Python base as production and add the uv binary
+FROM python:3.15-slim AS builder
+COPY --from=ghcr.io/astral-sh/uv:0.12.3 /uv /uvx /usr/local/bin/
 
 # 2. Set the working directory
 WORKDIR /app
@@ -8,6 +9,7 @@ WORKDIR /app
 ENV UV_LINK_MODE=copy
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_PROJECT_ENVIRONMENT=/venv
+ENV UV_PYTHON_DOWNLOADS=never
 ENV PATH="/venv/bin:$PATH"
 
 # 4. Copy only the lock and project files first
