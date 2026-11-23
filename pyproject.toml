@@ -87,5 +87,5 @@ max-locals = 25
 max-attributes = 15
 
 [tool.ty.environment]
-python-version = "3.14"
+python-version = "3.15"
 root = ["."]

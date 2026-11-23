@@ -17,7 +17,7 @@ Downstream AI agent → [API key auth] → This wrapper → [Squid] → ManicTim
 
 ## Stack
 
-- **Python 3.14**, managed with [uv](https://github.com/astral-sh/uv)
+- **Python 3.15**, managed with [uv](https://github.com/astral-sh/uv)
 - **Flask 3** — web framework
 - **httpx** — HTTP client for ManicTime API calls (routed through Squid)
 - **Flask-Caching** (`SimpleCache`) — in-memory cache for MT responses
